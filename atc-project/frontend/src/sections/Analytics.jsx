@@ -9,11 +9,25 @@ export default function Analytics() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    api.analytics().then(setData).catch((e) => setError(e.message));
+    api.analytics()
+      .then(setData)
+      .catch((e) => setError(e.message));
   }, []);
 
-  if (error) return <div className="page"><Empty icon="✕">{error}. Is the backend running?</Empty></div>;
-  if (!data) return <div className="page"><Empty icon="◷">Loading model analytics…</Empty></div>;
+  if (error) {
+    return (
+      <div className="page">
+        <Empty icon="✕">{error}. Is the backend running?</Empty>
+      </div>
+    );
+  }
+  if (!data) {
+    return (
+      <div className="page">
+        <Empty icon="◷">Loading model analytics…</Empty>
+      </div>
+    );
+  }
 
   const m = data.metrics || {};
   const report = m.classification_report || {};
@@ -24,19 +38,21 @@ export default function Analytics() {
     <div className="page section-gap">
       <div className="page-head">
         <h2>Model Analytics</h2>
-        <p>Evaluation of the trained ResNet-50 classifier ({classes.length} aircraft types).
-           Metrics computed on the held-out test set.</p>
+        <p>Evaluation of the trained ResNet-50 classifier ({classes.length} aircraft types). Metrics computed on the held-out test set.</p>
       </div>
 
+      {/* Metrics Counter Grid */}
       <div className="tiles">
         <Tile value={pct(m.accuracy)} label="Accuracy" />
         <Tile value={pct(m.precision_weighted)} label="Precision (w)" />
         <Tile value={pct(m.recall_weighted)} label="Recall (w)" />
         <Tile value={pct(m.f1_weighted)} label="F1 (w)" />
-        {m.inference_time_ms_per_image != null &&
-          <Tile value={`${m.inference_time_ms_per_image.toFixed(0)} ms`} label="Inference / image" />}
+        {m.inference_time_ms_per_image != null && (
+          <Tile value={`${m.inference_time_ms_per_image.toFixed(0)} ms`} label="Inference / image" />
+        )}
       </div>
 
+      {/* Data Visualization Grid */}
       <div className="grid2">
         <div className="card">
           <h3>Per-Class Accuracy</h3>
@@ -47,7 +63,14 @@ export default function Analytics() {
           <h3>Precision / Recall / F1 by Class</h3>
           <table className="table">
             <thead>
-              <tr><th>Class</th><th>Category</th><th className="num">Prec</th><th className="num">Rec</th><th className="num">F1</th><th className="num">N</th></tr>
+              <tr>
+                <th>Class</th>
+                <th>Category</th>
+                <th className="num">Prec</th>
+                <th className="num">Rec</th>
+                <th className="num">F1</th>
+                <th className="num">N</th>
+              </tr>
             </thead>
             <tbody>
               {classes.map((c) => {
@@ -68,23 +91,31 @@ export default function Analytics() {
         </div>
       </div>
 
+      {/* Dynamic Image Plot Container */}
       {data.plots && Object.keys(data.plots).length > 0 && (
-        <div className="grid2">
+        <div className="grid2 plot-container">
           {data.plots.confusion_matrix && (
-            <div className="plot"><h4>Confusion Matrix</h4>
-              <img src={api.plotUrl(data.plots.confusion_matrix)} alt="confusion matrix" /></div>
+            <div className="card plot">
+              <h4>Confusion Matrix Heatmap</h4>
+              <img src={api.plotUrl(data.plots.confusion_matrix)} alt="Confusion Matrix Heatmap" />
+            </div>
           )}
           {data.plots.class_distribution && (
-            <div className="plot"><h4>Class Distribution</h4>
-              <img src={api.plotUrl(data.plots.class_distribution)} alt="class distribution" /></div>
+            <div className="card plot">
+              <h4>Class Distribution</h4>
+              <img src={api.plotUrl(data.plots.class_distribution)} alt="Class Distribution" />
+            </div>
           )}
           {data.plots.sample_images && (
-            <div className="plot" style={{ gridColumn: '1 / -1' }}><h4>Sample Images</h4>
-              <img src={api.plotUrl(data.plots.sample_images)} alt="samples" /></div>
+            <div className="card plot full-width">
+              <h4>Sample Images From Dataset</h4>
+              <img src={api.plotUrl(data.plots.sample_images)} alt="Sample Dataset Aircraft Images" />
+            </div>
           )}
         </div>
       )}
 
+      {/* Metadata Overview Summary */}
       <div className="card">
         <h3>Model Card</h3>
         <div className="kv"><span>Architecture</span><b>{(data.comparison?.[0]?.model) || 'resnet50'}</b></div>
