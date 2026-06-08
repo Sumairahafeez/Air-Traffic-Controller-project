@@ -1,0 +1,14 @@
+              precision    recall  f1-score   support
+
+         ATR       0.99      1.00      0.99        89
+      Airbus       1.00      0.97      0.98        88
+      Boeing       0.96      0.99      0.97        92
+        C130       1.00      0.99      0.99        90
+         F16       0.99      0.99      0.99        76
+        Grob       1.00      0.99      0.99        79
+         KAI       0.99      1.00      0.99        76
+      Sukhoi       1.00      1.00      1.00        88
+
+    accuracy                           0.99       678
+   macro avg       0.99      0.99      0.99       678
+weighted avg       0.99      0.99      0.99       678

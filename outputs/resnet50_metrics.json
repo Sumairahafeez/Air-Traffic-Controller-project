@@ -1,0 +1,82 @@
+{
+  "accuracy": 0.9896755162241888,
+  "precision_weighted": 0.9898973656542357,
+  "recall_weighted": 0.9896755162241888,
+  "f1_weighted": 0.9896964286897617,
+  "inference_time_seconds_total": 390.331534532,
+  "inference_time_ms_per_image": 575.7102279233038,
+  "per_class_accuracy": {
+    "ATR": 1.0,
+    "Airbus": 0.9659090909090909,
+    "Boeing": 0.9891304347826086,
+    "C130": 0.9888888888888889,
+    "F16": 0.9868421052631579,
+    "Grob": 0.9873417721518988,
+    "KAI": 1.0,
+    "Sukhoi": 1.0
+  },
+  "classification_report": {
+    "ATR": {
+      "precision": 0.9888888888888889,
+      "recall": 1.0,
+      "f1-score": 0.994413407821229,
+      "support": 89.0
+    },
+    "Airbus": {
+      "precision": 1.0,
+      "recall": 0.9659090909090909,
+      "f1-score": 0.9826589595375722,
+      "support": 88.0
+    },
+    "Boeing": {
+      "precision": 0.9578947368421052,
+      "recall": 0.9891304347826086,
+      "f1-score": 0.9732620320855615,
+      "support": 92.0
+    },
+    "C130": {
+      "precision": 1.0,
+      "recall": 0.9888888888888889,
+      "f1-score": 0.994413407821229,
+      "support": 90.0
+    },
+    "F16": {
+      "precision": 0.9868421052631579,
+      "recall": 0.9868421052631579,
+      "f1-score": 0.9868421052631579,
+      "support": 76.0
+    },
+    "Grob": {
+      "precision": 1.0,
+      "recall": 0.9873417721518988,
+      "f1-score": 0.9936305732484076,
+      "support": 79.0
+    },
+    "KAI": {
+      "precision": 0.987012987012987,
+      "recall": 1.0,
+      "f1-score": 0.9934640522875817,
+      "support": 76.0
+    },
+    "Sukhoi": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 88.0
+    },
+    "accuracy": 0.9896755162241888,
+    "macro avg": {
+      "precision": 0.9900798397508923,
+      "recall": 0.9897640364994555,
+      "f1-score": 0.9898355672580923,
+      "support": 678.0
+    },
+    "weighted avg": {
+      "precision": 0.9898973656542357,
+      "recall": 0.9896755162241888,
+      "f1-score": 0.9896964286897617,
+      "support": 678.0
+    }
+  },
+  "evaluated_checkpoint": "outputs/resnet50_best.pth"
+}

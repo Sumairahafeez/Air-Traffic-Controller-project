@@ -1,0 +1,12 @@
+[
+  {
+    "model": "resnet50",
+    "accuracy": 0.9896755162241888,
+    "precision_weighted": 0.9898973656542357,
+    "recall_weighted": 0.9896755162241888,
+    "f1_weighted": 0.9896964286897617,
+    "training_time_seconds": null,
+    "inference_time_ms_per_image": 575.7102279233038,
+    "peak_cuda_memory_mb": null
+  }
+]
