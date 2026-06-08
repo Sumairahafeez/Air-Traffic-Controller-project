@@ -1,5 +1,5 @@
 // Backend API client.
-export const API_URL = 'http://localhost:5000';
+export const API_URL = 'https://mustafanoor-airtrafficcontrol.hf.space';
 
 async function postImage(path, imageBase64) {
   const res = await fetch(`${API_URL}${path}`, {
