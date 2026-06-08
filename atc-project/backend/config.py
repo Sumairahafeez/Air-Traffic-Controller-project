@@ -7,16 +7,16 @@ PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, '..', '..'))
 
 class Config:
     DEBUG = True
-    PORT = 5000
+    PORT = 7860
 
     # --- Models ---
     # Pretrained COCO model used for BOTH detection and segmentation.
     DETECTION_MODEL = os.path.join(BASE_DIR, 'yolov8m-seg.pt')
     # Your trained aircraft-type classifier (8 classes).
-    CLASSIFICATION_CHECKPOINT = os.path.join(PROJECT_ROOT, 'outputs', 'resnet50_best.pth')
+    CLASSIFICATION_CHECKPOINT = os.path.join(BASE_DIR, 'outputs', 'resnet50_best.pth')
 
     # Folder that holds metrics + plots produced during training/evaluation.
-    OUTPUTS_DIR = os.path.join(PROJECT_ROOT, 'outputs')
+    OUTPUTS_DIR = os.path.join(BASE_DIR, 'outputs')
 
     # --- Inference params ---
     DETECTION_CONFIDENCE = 0.35       # YOLO box confidence threshold
