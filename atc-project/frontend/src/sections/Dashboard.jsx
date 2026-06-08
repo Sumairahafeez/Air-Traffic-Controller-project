@@ -16,6 +16,7 @@ export default function Dashboard({ onNavigate }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   useEffect(() => {
     api.health().then(setHealth).catch(() => setHealth(null));
@@ -28,6 +29,29 @@ export default function Dashboard({ onNavigate }) {
     try { setResult(await api.analyze(image)); }
     catch (e) { setError(e.message); }
     finally { setLoading(false); }
+  };
+
+  const downloadReport = async () => {
+    if (!result) return;
+    setPdfLoading(true); setError(null);
+    try {
+      const blob = await api.generateReport({
+        input_image: image,
+        ...result
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'atc_vision_report.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      setError('PDF Generation failed: ' + e.message);
+    } finally {
+      setPdfLoading(false);
+    }
   };
 
   return (
@@ -65,11 +89,28 @@ export default function Dashboard({ onNavigate }) {
           <RunButton onClick={run} disabled={!image} loading={loading}>Run Full Analysis</RunButton>
           {error && <div className="alert">⚠ {error}</div>}
           {result && (
-            <div className="tiles">
-              <Tile value={result.summary.total_aircraft} label="Detected" />
-              <Tile value={result.summary.classified} label="Classified" />
-              <Tile value={result.summary.segmented_instances} label="Segmented" />
-            </div>
+            <>
+              <div className="tiles">
+                <Tile value={result.summary.total_aircraft} label="Detected" />
+                <Tile value={result.summary.classified} label="Classified" />
+                <Tile value={result.summary.segmented_instances} label="Segmented" />
+              </div>
+              <button 
+                className="btn secondary" 
+                onClick={downloadReport} 
+                disabled={pdfLoading || loading}
+                style={{ marginTop: 12, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+              >
+                {pdfLoading ? (
+                  <>
+                    <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+                    Generating PDF...
+                  </>
+                ) : (
+                  <>📄 Generate PDF Report</>
+                )}
+              </button>
+            </>
           )}
         </div>
 

@@ -7,6 +7,7 @@ export default function Classification() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   const run = async () => {
     if (!image) return;
@@ -15,6 +16,30 @@ export default function Classification() {
       setResult(await api.classify(image));
     } catch (e) { setError(e.message); }
     finally { setLoading(false); }
+  };
+
+  const downloadReport = async () => {
+    if (!result) return;
+    setPdfLoading(true); setError(null);
+    try {
+      const blob = await api.generateReport({
+        report_type: 'classification',
+        input_image: image,
+        ...result
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'classification_report.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      setError('PDF Generation failed: ' + e.message);
+    } finally {
+      setPdfLoading(false);
+    }
   };
 
   const pred = result?.prediction;
@@ -54,6 +79,21 @@ export default function Classification() {
                 <h3>Class Probabilities</h3>
                 {sorted.map(([name, p]) => <Bar key={name} label={name} value={p} />)}
               </div>
+              <button 
+                className="btn secondary" 
+                onClick={downloadReport} 
+                disabled={pdfLoading || loading}
+                style={{ marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+              >
+                {pdfLoading ? (
+                  <>
+                    <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+                    Generating PDF...
+                  </>
+                ) : (
+                  <>📄 Generate PDF Report</>
+                )}
+              </button>
             </div>
           )}
         </div>

@@ -7,6 +7,7 @@ export default function Detection() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   const run = async () => {
     if (!image) return;
@@ -15,6 +16,30 @@ export default function Detection() {
       setResult(await api.detect(image));
     } catch (e) { setError(e.message); }
     finally { setLoading(false); }
+  };
+
+  const downloadReport = async () => {
+    if (!result) return;
+    setPdfLoading(true); setError(null);
+    try {
+      const blob = await api.generateReport({
+        report_type: 'detection',
+        input_image: image,
+        ...result
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'detection_report.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      setError('PDF Generation failed: ' + e.message);
+    } finally {
+      setPdfLoading(false);
+    }
   };
 
   const dets = result?.detections || [];
@@ -35,10 +60,27 @@ export default function Detection() {
           <RunButton onClick={run} disabled={!image} loading={loading}>Detect Aircraft</RunButton>
           {error && <div className="alert">⚠ {error}</div>}
           {result && (
-            <div className="tiles">
-              <Tile value={result.summary.total} label="Aircraft" />
-              <Tile value={`${(result.summary.avg_confidence * 100).toFixed(0)}%`} label="Avg Det. Conf" />
-            </div>
+            <>
+              <div className="tiles">
+                <Tile value={result.summary.total} label="Aircraft" />
+                <Tile value={`${(result.summary.avg_confidence * 100).toFixed(0)}%`} label="Avg Det. Conf" />
+              </div>
+              <button 
+                className="btn secondary" 
+                onClick={downloadReport} 
+                disabled={pdfLoading || loading}
+                style={{ marginTop: 12, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+              >
+                {pdfLoading ? (
+                  <>
+                    <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+                    Generating PDF...
+                  </>
+                ) : (
+                  <>📄 Generate PDF Report</>
+                )}
+              </button>
+            </>
           )}
         </div>
 

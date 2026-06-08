@@ -112,6 +112,25 @@ export default function Analytics() {
               <img src={api.plotUrl(data.plots.sample_images)} alt="Sample Dataset Aircraft Images" />
             </div>
           )}
+          {data.plots.heatmap && (
+                <div className="card plot">
+                  <h4>Heatmap</h4>
+                  <img
+                    src={api.plotUrl(data.plots.heatmap)}
+                    alt="Heatmap"
+                  />
+                </div>
+              )}
+
+              {data.plots.class_graph && (
+                <div className="card plot">
+                  <h4>Class Graph</h4>
+                  <img
+                    src={api.plotUrl(data.plots.class_graph)}
+                    alt="Class Graph"
+                  />
+                </div>
+              )}
         </div>
       )}
 

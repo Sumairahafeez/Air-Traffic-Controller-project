@@ -120,6 +120,7 @@ class AircraftClassifier:
 # ---------------------------------------------------------------------------
 _WHITE = (255, 255, 255)
 _BLACK = (0, 0, 0)
+_GREEN = (0, 255, 0)
 
 
 def _draw_label(image, text, x, y):
@@ -139,10 +140,10 @@ def draw_detections(image, detections):
     out = image.copy()
     for det in detections:
         x, y, w, h = det['box']
-        cv2.rectangle(out, (x, y), (x + w, y + h), _WHITE, 2)
+        cv2.rectangle(out, (x, y), (x + w, y + h), _GREEN, 3)
         cv2.rectangle(out, (x, y), (x + w, y + h), _BLACK, 1)  # thin inner edge
         label = det.get('label') or det.get('class') or 'Aircraft'
-        conf = det.get('confidence', 0)
+        conf = det.get('classification_confidence') or det.get('detection_confidence', 0)
         _draw_label(out, f'{label} {conf * 100:.0f}%', x, y)
     return out
 

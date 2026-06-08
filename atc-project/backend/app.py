@@ -15,14 +15,16 @@ Endpoints
 import json
 import os
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, send_file
 from flask_cors import CORS
 from ultralytics import YOLO
+import io
 
 from config import Config
 from utils import (AircraftClassifier, build_segmentation_stages,
                    draw_detections, image_to_base64, load_image_from_base64,
                    resize_image)
+from report_generator import make_pdf_report
 
 app = Flask(__name__)
 CORS(app, origins=Config.CORS_ORIGINS)
@@ -179,6 +181,23 @@ def analyze():
     })
 
 
+@app.route('/generate_report', methods=['POST'])
+def generate_report():
+    data = request.get_json(silent=True) or {}
+    try:
+        pdf_bytes = make_pdf_report(data)
+        return send_file(
+            io.BytesIO(pdf_bytes),
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name='atc_vision_report.pdf'
+        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Failed to generate PDF: {str(e)}'}), 500
+
+
 @app.route('/analytics', methods=['GET'])
 def analytics():
     metrics_path = os.path.join(Config.OUTPUTS_DIR, 'resnet50_metrics.json')
@@ -199,9 +218,12 @@ def analytics():
         'confusion_matrix': 'resnet50_confusion_matrix.png',
         'class_distribution': 'class_distribution.png',
         'sample_images': 'sample_images.png',
+        'heatmap': 'heatmap.png',
+        'class_graph': 'class-graph.png',
     }.items():
         if os.path.exists(os.path.join(Config.OUTPUTS_DIR, fname)):
             plots[key] = f'/analytics/plot/{fname}'
+
     payload['plots'] = plots
     return jsonify(payload)
 

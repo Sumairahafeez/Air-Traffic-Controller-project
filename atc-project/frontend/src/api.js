@@ -26,4 +26,17 @@ export const api = {
     return r.json();
   }),
   plotUrl: (path) => `${API_URL}${path}`,
+  generateReport: async (data) => {
+    const res = await fetch(`${API_URL}/generate_report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      let msg = `Report generation failed (${res.status})`;
+      try { msg = (await res.json()).error || msg; } catch { /* ignore */ }
+      throw new Error(msg);
+    }
+    return res.blob();
+  },
 };
